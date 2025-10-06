@@ -1,0 +1,511 @@
+<!doctype html>
+<html lang="vi">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Trung Thu Vui Vẻ</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Mali:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;1,200;1,300;1,400;1,500;1,600;1,700&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --accent: #ff7f50;
+            --accent-2: #a42424;
+        }
+
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+            font-family: "Mali", cursive;
+            background: url('z7086920455665_adf20757b40a6b15d15e55d223a00ec3.jpg') no-repeat center center fixed;
+            background-size: cover;
+            overflow: hidden;
+        }
+
+        .stage {
+            position: relative;
+            min-height: 100vh;
+            overflow: hidden;
+        }
+
+        canvas#starfield {
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+
+        .moon {
+            /* Removed moon styles */
+            display: none;
+        }
+
+        @media (max-width:600px) {
+            .moon {
+                top: 40px;
+                right: 14px;
+                width: 70px;
+                height: 70px;
+            }
+
+        }
+
+        #lantern-container {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            overflow: hidden;
+            z-index: 10;
+        }
+
+        .lantern {
+            position: absolute;
+            pointer-events: auto;
+            width: 5vw;
+            /* Adjusted to scale with screen size */
+            max-width: 50px;
+            /* Limit maximum size */
+            user-select: none;
+            animation: swing 2s ease-in-out infinite, twinkle 4s ease-in-out infinite;
+        }
+
+        @keyframes swing {
+            0% {
+                transform: rotate(-5deg);
+            }
+
+            50% {
+                transform: rotate(5deg);
+            }
+
+            100% {
+                transform: rotate(-5deg);
+            }
+        }
+
+        @keyframes twinkle {
+            0%,
+            100% {
+                opacity: 0.8;
+                transform: scale(1);
+            }
+
+            50% {
+                opacity: 1;
+                transform: scale(1.05);
+            }
+        }
+
+        .swing {
+            animation: swing 2s ease-in-out infinite;
+        }
+
+        #hint {
+            position: fixed;
+            bottom: 5vh;
+            /* Adjusted for better placement on all devices */
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0);
+            color: #ffa722;
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-size: 2.5vw;
+            /* Scales with screen size */
+            max-font-size: 28px;
+            /* Limit maximum font size */
+            font-weight: 800;
+            opacity: 0;
+            transition: opacity 0.5s;
+            z-index: 1000;
+            pointer-events: none;
+            text-align: center;
+            white-space: nowrap;
+            text-shadow:
+                0 0 15px #ff8a50,
+                0 0 20px #ffd180;
+
+        }
+
+        @media (max-width: 600px) {
+            #hint {
+                font-size: 4vw;
+                /* Adjusted for smaller screens */
+            }
+        }
+
+        #wish-popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(255, 255, 255, 0.96);
+            color: #ff8d22;
+            padding: 5vw;
+            /* Adjusted for scaling */
+            max-width: 90%;
+            /* Limit maximum width */
+            border-radius: 12px;
+            font-size: 1.5vw;
+            /* Scales with screen size */
+            max-font-size: 1.8rem;
+            /* Limit maximum font size */
+            font-weight: 700;
+            display: none;
+            z-index: 9999;
+            box-shadow: 0 6px 30px rgba(0, 0, 0, 0.35);
+            text-align: center;
+            box-sizing: border-box;
+            pointer-events: auto;
+            text-shadow:
+                0 0 25px #ffd180;
+            box-shadow:
+                0 0 20px #ff8a50,
+                0 0 25px #ffd180;
+        }
+
+        @media (max-width: 600px) {
+            #wish-popup {
+                font-size: 3vw;
+                /* Adjusted for smaller screens */
+                padding: 4vw;
+            }
+        }
+
+        .controls {
+            position: fixed;
+            left: 18px;
+            top: 18px;
+            z-index: 10;
+            color: #fff;
+            font-size: 14px;
+            background: rgba(0, 0, 0, 0.2);
+            padding: 8px 12px;
+            border-radius: 10px;
+        }
+
+        .music-toggle {
+            cursor: pointer;
+            margin-left: 10px;
+            color: #fff;
+            opacity: 0.95;
+        }
+
+        #bottom-image-container {
+            position: fixed;
+            bottom: 0;
+            right: 20px;
+            transform: none;
+            z-index: 5;
+            pointer-events: none;
+        }
+
+        #bottom-image-container img {
+            height: 80px;
+            width: auto;
+            display: block;
+        }
+
+        @media (max-width: 600px) {
+            #bottom-image-container img {
+                height: 20px;
+            }
+        }
+
+        #left-image-container {
+            position: fixed;
+            bottom: 0;
+            left: 20px;
+            transform: none;
+            z-index: 5;
+            pointer-events: none;
+        }
+
+        #left-image-container img {
+            height: 150px;
+            width: auto;
+            display: block;
+        }
+
+        @media (max-width: 600px) {
+            #left-image-container img {
+                height: 80px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="stage">
+        <canvas id="starfield"></canvas>
+
+        <div id="lantern-container"></div>
+
+        <div id="wish-popup" role="dialog" aria-live="polite"></div>
+
+        <div id="bottom-image-container">
+            </div>
+
+        <div id="hint">Chạm vào những đèn trời</div>
+
+        <audio id="bg-music" loop>
+            <source src="nhac.mp3" type="audio/mp3">
+            Trình duyệt của bạn không hỗ trợ thẻ audio.
+        </audio>
+    </div>
+
+    <script>
+        // Cờ để kiểm tra xem nhạc đã phát chưa
+        let musicStarted = false;
+function startMusic() {
+    const bg = document.getElementById("bg-music");
+    if (bg && !musicStarted) {
+        bg.volume = 1;
+        bg.play().then(() => {
+            musicStarted = true;
+            console.log("Music started successfully after user interaction.");
+        }).catch(error => {
+            console.error("Failed to play music:", error);
+        });
+    }
+}
+
+
+        // Gắn hàm startMusic vào một sự kiện tương tác chung của người dùng
+        document.addEventListener('click', startMusic, { once: true });
+        document.addEventListener('touchstart', startMusic, { once: true });
+
+        // ===== Canvas sao và sao băng (Giữ nguyên) =====
+        const canvas = document.getElementById("starfield");
+        const ctx = canvas.getContext("2d");
+        let w, h, stars = [], meteors = [];
+
+        function resizeCanvas() {
+            w = canvas.width = innerWidth;
+            h = canvas.height = innerHeight;
+            stars = [];
+            const count = Math.round((w * h) / 2200);
+            for (let i = 0; i < count; i++) {
+                stars.push({
+                    x: Math.random() * w,
+                    y: Math.random() * h,
+                    r: Math.random() * 0.9 + 0.1,
+                    a: Math.random() * 0.8 + 0.2,
+                    t: Math.random() * 0.02 + 0.002
+                });
+            }
+        }
+
+        function drawStars() {
+            ctx.clearRect(0, 0, w, h);
+            for (const s of stars) {
+                s.a += (Math.random() > 0.5 ? 1 : -1) * s.t;
+                s.a = Math.max(0.05, Math.min(1, s.a));
+                ctx.beginPath();
+                ctx.globalAlpha = s.a;
+                ctx.fillStyle = "#fff";
+                ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+                ctx.fill();
+            }
+            ctx.globalAlpha = 1;
+        }
+
+        function createMeteor() {
+            const startX = Math.random() * w;
+            const startY = Math.random() * (h / 3);
+            const speed = Math.random() * 10 + 6;
+            meteors.push({
+                x: startX,
+                y: startY,
+                vx: speed + 6,
+                vy: speed / 2,
+                len: Math.random() * 120 + 100,
+                a: 1
+            });
+        }
+
+        function drawMeteors() {
+            for (let i = meteors.length - 1; i >= 0; i--) {
+                const m = meteors[i];
+                const x2 = m.x - m.len;
+                const y2 = m.y - m.len / 2;
+                const g = ctx.createLinearGradient(m.x, m.y, x2, y2);
+                g.addColorStop(0, `rgba(255,255,255,${m.a})`);
+                g.addColorStop(1, "rgba(255,255,255,0)");
+                ctx.strokeStyle = g;
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.moveTo(m.x, m.y);
+                ctx.lineTo(x2, y2);
+                ctx.stroke();
+                m.x += m.vx;
+                m.y += m.vy;
+                m.a -= 0.02;
+                if (m.a <= 0 || m.x > w + 200 || m.y > h + 200) meteors.splice(i, 1);
+            }
+            ctx.strokeStyle = "#fff";
+            ctx.lineWidth = 1;
+        }
+
+        function loop() {
+            drawStars();
+            drawMeteors();
+            if (Math.random() < 0.01) createMeteor();
+            requestAnimationFrame(loop);
+        }
+
+        window.addEventListener("resize", resizeCanvas);
+        resizeCanvas();
+        loop();
+
+        // ===== Đèn lồng và lời chúc (Giữ nguyên) =====
+        const lanternContainer = document.getElementById("lantern-container");
+        // Sử ảnh và lời chúc ở đây
+        const wishesWithImages = [
+            { text: "Chúc bạn Trung Thu ấm áp, hạnh phúc!", img: "z7085980429338_f13e1d6c08d454b71bb498478b3660a7.jpg" },
+            { text: "Chúc gia đình bạn đoàn viên, vui vẻ!", img: "z7085980432152_a2e5e281036ee282849358e6cae1b7eb.jpg" },
+            { text: "Mùa trăng an lành và ngọt ngào!", img: "z7085980442711_35b4f4d187bd505a359d0ccb452f5148.jpg" },
+            { text: "Chúc bạn luôn sáng như trăng rằm!", img: "z7085980482315_cdcfd185115efe894dc8dc5a0de58382.jpg" },
+            { text: "Mong ước thành hiện thực nhé!", img: "z7085980482624_ebb83296c8722dc6203f9238471b378e.jpg" },
+            { text: "Hãy luôn xinh đẹp và yêu đời", img: "z7085980490943_f670415df19dc66500ea474986528e2f.jpg" },
+            { text: "Cũng xinh 😍", img: "z7086349493463_644121acbb90493a5d3c9e5c5bff2481.jpg" },
+            { text: "Vẫn mãi là em bé nhé ❤️", img: "z7086309527877_cb2a3e36f182ddd637a79b1d8d8cf452.jpg" },
+        ];
+
+        let currentWishIndex = 0;
+
+        function createLantern() {
+            const lantern = document.createElement("img");
+            // sửa đèn lồng ở đây
+            lantern.src = "./den.png";
+            lantern.className = "lantern swing";
+
+            const layer = Math.floor(Math.random() * 3) + 1;
+            let size = 60,
+                duration = 10000,
+                opacity = 1; // Increased size and opacity
+
+            if (layer === 1) {
+                size = 40 + Math.random() * 20; // Larger size for layer 1
+                duration = 14000 + Math.random() * 5000;
+                opacity = 0.9; // Higher opacity for layer 1
+            } else if (layer === 2) {
+                size = 50 + Math.random() * 30; // Larger size for layer 2
+                duration = 12000 + Math.random() * 4000;
+                opacity = 0.95; // Higher opacity for layer 2
+            } else {
+                size = 60 + Math.random() * 40; // Maximum size for layer 3
+                duration = 10000 + Math.random() * 3000;
+                opacity = 1; // Maximum opacity for layer 3
+            }
+
+            lantern.style.width = size + "px";
+            lantern.style.left = Math.random() * 90 + "vw";
+            lantern.style.bottom = "0px";
+            lantern.style.opacity = opacity;
+
+            lanternContainer.appendChild(lantern);
+
+            const drift = Math.random() * 140 - 70;
+            const up = 120 + Math.random() * 40;
+            lantern.animate(
+                [
+                    { transform: "translate(0,0)", opacity: opacity },
+                    { transform: `translate(${drift}px, -${up}vh)`, opacity: 0 }
+                ],
+                { duration: duration, easing: "linear", fill: "forwards" }
+            );
+
+            setTimeout(() => lantern.remove(), duration);
+
+            lantern.addEventListener("click", (e) => {
+                e.stopPropagation();
+                // **Gọi startMusic khi đèn lồng được click**
+                startMusic();
+
+                const wishPopup = document.getElementById("wish-popup");
+                const randomWish = wishesWithImages[currentWishIndex];
+                currentWishIndex = (currentWishIndex + 1) % wishesWithImages.length; // Move to the next wish in sequence
+                wishPopup.innerHTML = `
+                    <div style="display: flex; align-items: center; gap: 15px;">
+                        <img src="${randomWish.img}" alt="Wish Image" style="max-width: 40%; border-radius: 8px;" />
+                        <p style="flex: 1; font-size: 1.5rem; margin: 0;">${randomWish.text}</p>
+                    </div>`;
+                wishPopup.style.display = "block";
+            });
+            // Thêm sự kiện touchstart cho thiết bị di động
+            lantern.addEventListener("touchstart", (e) => {
+                e.stopPropagation();
+                // **Gọi startMusic khi đèn lồng được chạm**
+                startMusic();
+
+                const wishPopup = document.getElementById("wish-popup");
+                const randomWish = wishesWithImages[currentWishIndex];
+                currentWishIndex = (currentWishIndex + 1) % wishesWithImages.length; // Move to the next wish in sequence
+                wishPopup.innerHTML = `
+                    <div style="display: flex; align-items: center; gap: 15px;">
+                        <img src="${randomWish.img}" alt="Wish Image" style="max-width: 40%; border-radius: 8px;" />
+                        <p style="flex: 1; font-size: 1.5rem; margin: 0;">${randomWish.text}</p>
+                    </div>`;
+                wishPopup.style.display = "block";
+            });
+        }
+
+        setInterval(createLantern, 500);
+
+        // ===== Xóa đoạn code autoplay cũ =====
+        // Đoạn code cũ đã bị xóa:
+        /*
+        window.addEventListener("load", () => {
+            if (bg) {
+                bg.volume = 1; // Adjusted volume for better experience
+                bg.play().catch(() => {
+                    console.log("Autoplay failed. User interaction required.");
+                });
+            }
+        });
+        */
+        // Thay thế bằng 2 event listener 'click' và 'touchstart' ở trên.
+        
+        // ===== Ẩn popup khi click ngoài (Giữ nguyên) =====
+        document.addEventListener("click", (e) => {
+            const pop = document.getElementById("wish-popup");
+            if (pop && pop.style.display === "block") {
+                // Đảm bảo click ra ngoài popup và không phải click vào đèn lồng mới ẩn
+                if (!pop.contains(e.target) && e.target.className !== "lantern swing") {
+                     pop.style.display = "none";
+                }
+            }
+        });
+        
+        // **Thêm xử lý ẩn popup khi chạm ngoài trên di động**
+        document.addEventListener("touchstart", (e) => {
+            const pop = document.getElementById("wish-popup");
+            if (pop && pop.style.display === "block") {
+                if (!pop.contains(e.target) && e.target.className !== "lantern swing") {
+                    pop.style.display = "none";
+                }
+            }
+        });
+
+        // ===== Hiển thị gợi ý (Giữ nguyên) =====
+        setTimeout(() => {
+            const hint = document.getElementById("hint");
+            if (hint) {
+                hint.style.opacity = "1";
+
+                setTimeout(() => {
+                    if (hint) {
+                        hint.style.opacity = "0";
+                    }
+                }, 5000);
+            }
+        }, 1000);
+    </script>
+
+</body>
+</html>
